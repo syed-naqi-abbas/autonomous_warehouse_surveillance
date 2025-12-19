@@ -1,0 +1,12 @@
+opencv-python
+ultralytics
+pyzbar
+tabulate
+numpy
+pyserial
+torch
+torchvision
+catkin_pkg
+empy
+lark
+libzbar0

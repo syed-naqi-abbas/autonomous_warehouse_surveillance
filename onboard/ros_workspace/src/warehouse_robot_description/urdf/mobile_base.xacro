@@ -1,0 +1,849 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Main base link (invisible, just for reference) -->
+<link name="base_link">
+  <inertial>
+    <mass value="0.001" />  <!-- Minimal mass for reference frame -->
+    <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+             iyy="0.0001" iyz="0.0" izz="0.0001" />
+  </inertial>
+</link>
+
+<link name="base_footprint">
+  <visual>
+    <geometry>
+      <box size="0.01 0.01 0.01"/> <!-- small invisible link -->
+    </geometry>
+    <material name="white"/>
+  </visual>
+</link>
+
+<joint name="base_link_to_base_footprint" type="fixed">
+  <parent link="base_link"/>
+  <child link="base_footprint"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+
+<link name="lidar_link">
+  <visual>
+    <geometry>
+      <cylinder radius="${lidar_radius}" length="${lidar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="navy_blue" />
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder radius="${lidar_radius}" length="${lidar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="${lidar_mass}" />
+    <inertia ixx="${lidar_mass * (3 * lidar_radius * lidar_radius + lidar_height * lidar_height) / 12}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${lidar_mass * (3 * lidar_radius * lidar_radius + lidar_height * lidar_height) / 12}" 
+             iyz="0.0"
+             izz="${lidar_mass * lidar_radius * lidar_radius / 2}" />
+  </inertial>
+</link>
+
+<!-- Lidar Mount -->
+<!-- <link name="lidar_mount_link">
+  <visual>
+    <geometry>
+      <box size="0.05 0.2 0.02" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.05 0.2 0.02" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="${lidar_mount_mass}" />
+    <inertia ixx="${lidar_mount_mass * (0.2 * 0.2 + 0.02 * 0.02) / 12}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${lidar_mount_mass * (0.05 * 0.05 + 0.02 * 0.02) / 12}" 
+             iyz="0.0"
+             izz="${lidar_mount_mass * (0.05 * 0.05 + 0.2 * 0.2) / 12}" />
+  </inertial>
+</link> -->
+
+<link name="plate_link">
+  <visual>
+    <geometry>
+      <box size="${base_length} ${base_width} 0.01" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="light_brown" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${base_length} ${base_width} 0.01" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="${base_plate_mass}" />
+    <inertia ixx="${base_plate_mass * (base_width * base_width + 0.01 * 0.01) / 12}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${base_plate_mass * (base_length * base_length + 0.01 * 0.01) / 12}" 
+             iyz="0.0"
+             izz="${base_plate_mass * (base_length * base_length + base_width * base_width) / 12}" />
+  </inertial>
+</link>
+
+<!-- Top plate covering rear frame region -->
+<link name="top_plate_link">
+  <visual>
+    <geometry>
+      <box size="0.28 ${base_width - 0.02} ${plate_thickness}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="light_brown" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${base_width - 0.02} ${plate_thickness}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="${top_plate_mass}" />
+    <inertia ixx="${top_plate_mass * ((base_width - 0.02) * (base_width - 0.02) + plate_thickness * plate_thickness) / 12}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${top_plate_mass * (0.28 * 0.28 + plate_thickness * plate_thickness) / 12}" 
+             iyz="0.0"
+             izz="${top_plate_mass * (0.28 * 0.28 + (base_width - 0.02) * (base_width - 0.02)) / 12}" />
+  </inertial>
+</link>
+
+<!-- Middle partition plate at height 14cm -->
+<link name="middle_plate_link">
+  <visual>
+    <geometry>
+      <box size="0.28 ${base_width - 0.02} ${plate_thickness}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="light_brown" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${base_width - 0.02} ${plate_thickness}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="${top_plate_mass}" />
+    <inertia ixx="${top_plate_mass * ((base_width - 0.02) * (base_width - 0.02) + plate_thickness * plate_thickness) / 12}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${top_plate_mass * (0.28 * 0.28 + plate_thickness * plate_thickness) / 12}" 
+             iyz="0.0"
+             izz="${top_plate_mass * (0.28 * 0.28 + (base_width - 0.02) * (base_width - 0.02)) / 12}" />
+  </inertial>
+</link>
+
+<!-- Frame bars - 4 bottom bars (rectangular base) -->
+<!-- REMOVED - replaced with horizontal rods around base plate -->
+
+<!-- Horizontal rods surrounding base plate -->
+<link name="base_rod_front">
+  <visual>
+    <geometry>
+      <box size="${base_length} ${rod_width} ${rod_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${base_length} ${rod_width} ${rod_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${base_rod_mass}" />
+    <inertia ixx="${base_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${base_rod_mass * (base_length * base_length + rod_height * rod_height) / 12}" 
+             iyz="0.0"
+             izz="${base_rod_mass * (base_length * base_length + rod_width * rod_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="base_rod_back">
+  <visual>
+    <geometry>
+      <box size="${base_length} ${rod_width} ${rod_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${base_length} ${rod_width} ${rod_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${base_rod_mass}" />
+    <inertia ixx="${base_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${base_rod_mass * (base_length * base_length + rod_height * rod_height) / 12}" 
+             iyz="0.0"
+             izz="${base_rod_mass * (base_length * base_length + rod_width * rod_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="base_rod_right">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${base_width} ${rod_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${base_width} ${rod_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${base_rod_mass}" />
+    <inertia ixx="${base_rod_mass * (base_width * base_width + rod_height * rod_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${base_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" 
+             iyz="0.0"
+             izz="${base_rod_mass * (rod_width * rod_width + base_width * base_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="base_rod_left">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${base_width} ${rod_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${base_width} ${rod_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${base_rod_mass}" />
+    <inertia ixx="${base_rod_mass * (base_width * base_width + rod_height * rod_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${base_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" 
+             iyz="0.0"
+             izz="${base_rod_mass * (rod_width * rod_width + base_width * base_width) / 12}" />
+  </inertial>
+</link>
+
+<!-- 4 VERTICAL RODS connecting bottom and top frames -->
+<link name="vertical_rod_front_right">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${vertical_rod_mass}" />
+    <inertia ixx="${vertical_rod_mass * (rod_height * rod_height + base_height * base_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${vertical_rod_mass * (rod_width * rod_width + base_height * base_height) / 12}" 
+             iyz="0.0"
+             izz="${vertical_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" />
+  </inertial>
+</link>
+
+<link name="vertical_rod_front_left">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${vertical_rod_mass}" />
+    <inertia ixx="${vertical_rod_mass * (rod_height * rod_height + base_height * base_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${vertical_rod_mass * (rod_width * rod_width + base_height * base_height) / 12}" 
+             iyz="0.0"
+             izz="${vertical_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" />
+  </inertial>
+</link>
+
+<link name="vertical_rod_rear_right">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${vertical_rod_mass}" />
+    <inertia ixx="${vertical_rod_mass * (rod_height * rod_height + base_height * base_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${vertical_rod_mass * (rod_width * rod_width + base_height * base_height) / 12}" 
+             iyz="0.0"
+             izz="${vertical_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" />
+  </inertial>
+</link>
+
+<link name="vertical_rod_rear_left">
+  <visual>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${rod_width} ${rod_height} ${base_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${vertical_rod_mass}" />
+    <inertia ixx="${vertical_rod_mass * (rod_height * rod_height + base_height * base_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${vertical_rod_mass * (rod_width * rod_width + base_height * base_height) / 12}" 
+             iyz="0.0"
+             izz="${vertical_rod_mass * (rod_width * rod_width + rod_height * rod_height) / 12}" />
+  </inertial>
+</link>
+
+<!-- Frame bars - 4 top bars (rectangular top) -->
+<link name="frame_top_front">
+  <visual>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (0.28 * 0.28 + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (0.28 * 0.28 + bar_width * bar_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_top_back">
+  <visual>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (0.28 * 0.28 + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (0.28 * 0.28 + bar_width * bar_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_top_left">
+  <visual>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * ((base_width - 2*bar_width) * (base_width - 2*bar_width) + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (bar_width * bar_width + (base_width - 2*bar_width) * (base_width - 2*bar_width)) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_top_right">
+  <visual>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * ((base_width - 2*bar_width) * (base_width - 2*bar_width) + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (bar_width * bar_width + (base_width - 2*bar_width) * (base_width - 2*bar_width)) / 12}" />
+  </inertial>
+</link>
+
+<!-- Middle partition frame bars - 4 bars around middle plate -->
+<link name="frame_middle_front">
+  <visual>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (0.28 * 0.28 + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (0.28 * 0.28 + bar_width * bar_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_middle_back">
+  <visual>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.28 ${bar_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (0.28 * 0.28 + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (0.28 * 0.28 + bar_width * bar_width) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_middle_left">
+  <visual>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * ((base_width - 2*bar_width) * (base_width - 2*bar_width) + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (bar_width * bar_width + (base_width - 2*bar_width) * (base_width - 2*bar_width)) / 12}" />
+  </inertial>
+</link>
+
+<link name="frame_middle_right">
+  <visual>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="${bar_width} ${top_plate_width} ${bar_height}" />
+    </geometry>
+  </collision>
+  <inertial>
+    <mass value="${frame_bar_mass}" />
+    <inertia ixx="${frame_bar_mass * ((base_width - 2*bar_width) * (base_width - 2*bar_width) + bar_height * bar_height) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${frame_bar_mass * (bar_width * bar_width + bar_height * bar_height) / 12}" 
+             iyz="0.0"
+             izz="${frame_bar_mass * (bar_width * bar_width + (base_width - 2*bar_width) * (base_width - 2*bar_width)) / 12}" />
+  </inertial>
+</link>
+
+<joint name="base_to_plate" type="fixed">
+  <parent link="base_link" />
+  <child link="plate_link" />
+  <origin xyz="0 0 ${-plate_thickness/2}" rpy="0 0 0" />
+</joint>
+
+<!-- Top plate joint - positioned at the top frame level, rear region -->
+<joint name="base_to_top_plate" type="fixed">
+  <parent link="base_link" />
+  <child link="top_plate_link" />
+  <origin xyz="-0.15 0 ${base_height + bar_height/2 + plate_thickness/2}" rpy="0 0 0" />
+  
+</joint>
+
+<!-- Middle partition plate joint at height 14cm -->
+<joint name="base_to_middle_plate" type="fixed">
+  <parent link="base_link" />
+  <child link="middle_plate_link" />
+  <origin xyz="-0.15 0 ${0.14 + bar_height/2 + plate_thickness/2}" rpy="0 0 0" />
+</joint>
+
+<!-- Middle partition frame bar joints -->
+<joint name="base_to_middle_front" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_middle_front" />
+  <origin xyz="-0.15 ${base_width/2 - bar_width/2} 0.14" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_middle_back" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_middle_back" />
+  <origin xyz="-0.15 ${-base_width/2 + bar_width/2} 0.14" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_middle_right" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_middle_right" />
+  <origin xyz="-0.01 0 0.14" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_middle_left" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_middle_left" />
+  <origin xyz="-0.29 0 0.14" rpy="0 0 0" />
+</joint>
+
+
+<!-- <joint name="top_plate_to_lidar_mount" type="fixed">
+  <parent link="base_link" />
+  <child link="lidar_mount_link" />
+  <origin xyz="0.25 0 ${rod_height/2 + 0.025}" rpy="0 0 0" />
+</joint> -->
+
+<!-- <joint name="lidar_mount_to_lidar" type="fixed">
+  <parent link="lidar_mount_link" />
+  <child link="lidar_link" />
+  <origin xyz="0 0 ${0.02/2 + lidar_height/2}" rpy="0 0 0" />
+</joint> -->
+
+<joint name="base_link_to_lidar" type="fixed">
+  <parent link="base_link" />
+  <child link="lidar_link" />
+  <origin xyz="0.27 0 0.02" rpy="3.14 0 -1.57" />
+</joint>
+
+<!-- Wheel links -->
+<xacro:macro name="wheel_link" params="prefix">
+  <link name="${prefix}_wheel_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_length}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi / 2.0} 0 0" />
+      <material name="black" />
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_length}" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="${pi / 2.0} 0 0" />
+    </collision>
+    <inertial>
+      <mass value="${wheel_mass}" />
+      <inertia ixx="${wheel_mass * (3 * wheel_radius * wheel_radius + wheel_length * wheel_length) / 12}" 
+               ixy="0.0" 
+               ixz="0.0"
+               iyy="${wheel_mass * (3 * wheel_radius * wheel_radius + wheel_length * wheel_length) / 12}" 
+               iyz="0.0"
+               izz="${wheel_mass * wheel_radius * wheel_radius / 2}" />
+    </inertial>
+  </link>
+</xacro:macro>
+
+<xacro:wheel_link prefix="front_right" />
+<xacro:wheel_link prefix="front_left" />
+<xacro:wheel_link prefix="rear_right" />
+<xacro:wheel_link prefix="rear_left" />
+
+<!-- Add this after your base_link and before the lidar_link -->
+
+<!-- IMU Link - placed at center of bottom plate -->
+<link name="imu_link">
+  <visual>
+    <geometry>
+      <box size="0.02 0.02 0.005" />  <!-- Small, flat IMU -->
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="grey" />
+  </visual>
+  <collision>
+    <geometry>
+      <box size="0.02 0.02 0.005" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="0.1" />  <!-- Lightweight IMU -->
+    <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
+             iyy="0.0001" iyz="0.0" izz="0.0001" />
+  </inertial>
+</link>
+
+<!-- Vertical support rod for camera (1 meter tall) -->
+<link name="camera_support_rod_link">
+  <visual>
+    <geometry>
+      <cylinder radius="0.01" length="1.0" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <material name="black" />
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder radius="0.01" length="1.0" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </collision>
+  <inertial>
+    <mass value="0.5" />
+    <inertia ixx="${0.5 * (1.0 * 1.0 / 12 + 0.01 * 0.01 / 4)}" 
+             ixy="0.0" 
+             ixz="0.0"
+             iyy="${0.5 * (1.0 * 1.0 / 12 + 0.01 * 0.01 / 4)}" 
+             iyz="0.0"
+             izz="${0.5 * 0.01 * 0.01 / 2}" />
+  </inertial>
+</link>
+
+<link name="camera_link">
+  <visual>
+    <geometry>
+      <cylinder radius="0.01" length="0.06" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+    <material name="grey" />
+  </visual>
+  <collision>
+    <geometry>
+      <cylinder radius="0.01" length="0.06" />
+    </geometry>
+    <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+  </collision>
+  <inertial>
+    <mass value="0.05" />
+    <inertia ixx="${0.05 * (3 * 0.01 * 0.01 + 0.06 * 0.06) / 12}" 
+             ixy="0.0" ixz="0.0"
+             iyy="${0.05 * (3 * 0.01 * 0.01 + 0.06 * 0.06) / 12}" 
+             iyz="0.0" 
+             izz="${0.05 * 0.01 * 0.01 / 2}" />
+  </inertial>
+</link>
+
+<link name="camera_rgb_frame">
+  <inertial>
+    <mass value="1e-5" />
+    <inertia ixx="1e-6" ixy="0.0" ixz="0.0"
+             iyy="1e-6" iyz="0.0" izz="1e-6" />
+  </inertial>
+</link>
+
+
+<!-- IMU Joint - fixed to base at center of bottom plate -->
+<joint name="base_to_imu" type="fixed">
+  <parent link="base_link" />
+  <child link="imu_link" />
+  <origin xyz="0 0 0.0025" rpy="0 0 0" />  <!-- Centered on base, slightly above surface -->
+</joint>
+
+
+
+<!-- Frame joints - Bottom frame (replaced with base rods) -->
+<joint name="base_to_base_rod_front" type="fixed">
+  <parent link="base_link" />
+  <child link="base_rod_front" />
+  <origin xyz="0 ${base_width/2 - rod_width/2} ${rod_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_base_rod_back" type="fixed">
+  <parent link="base_link" />
+  <child link="base_rod_back" />
+  <origin xyz="0 ${-base_width/2 + rod_width/2} ${rod_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_base_rod_right" type="fixed">
+  <parent link="base_link" />
+  <child link="base_rod_right" />
+  <origin xyz="${base_length/2 - rod_width/2} 0 ${rod_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_base_rod_left" type="fixed">
+  <parent link="base_link" />
+  <child link="base_rod_left" />
+  <origin xyz="${-base_length/2 + rod_width/2} 0 ${rod_height/2}" rpy="0 0 0" />
+</joint>
+
+<!-- Vertical rod joints - positioned at the 4 corners -->
+<joint name="base_to_vertical_rod_front_right" type="fixed">
+  <parent link="base_link" />
+  <child link="vertical_rod_front_right" />
+  <origin xyz="-0.01 ${base_width/2 - bar_width/2} ${base_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_vertical_rod_front_left" type="fixed">
+  <parent link="base_link" />
+  <child link="vertical_rod_front_left" />
+  <origin xyz="-0.29 ${base_width/2 - bar_width/2} ${base_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_vertical_rod_rear_right" type="fixed">
+  <parent link="base_link" />
+  <child link="vertical_rod_rear_right" />
+  <origin xyz="-0.01 ${-base_width/2 + bar_width/2} ${base_height/2}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_vertical_rod_rear_left" type="fixed">
+  <parent link="base_link" />
+  <child link="vertical_rod_rear_left" />
+  <origin xyz="-0.29 ${-base_width/2 + bar_width/2} ${base_height/2}" rpy="0 0 0" />
+</joint>
+
+<!-- Frame joints - Top frame -->
+<joint name="base_to_top_front" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_top_front" />
+  <origin xyz="-0.15 ${base_width/2 - bar_width/2} ${base_height}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_top_back" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_top_back" />
+  <origin xyz="-0.15 ${-base_width/2 + bar_width/2} ${base_height}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_top_right" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_top_right" />
+  <origin xyz="-0.01 0 ${base_height}" rpy="0 0 0" />
+</joint>
+
+<joint name="base_to_top_left" type="fixed">
+  <parent link="base_link" />
+  <child link="frame_top_left" />
+  <origin xyz="-0.29 0 ${base_height}" rpy="0 0 0" />
+</joint>
+
+<!-- Wheel joints - Wheels positioned at specified locations -->
+<joint name="base_front_right_wheel_joint" type="continuous">
+  <parent link="base_link" />
+  <child link="front_right_wheel_link" />
+  <origin xyz="0.15 -0.165 -0.025" rpy="0 0 0" />
+  <axis xyz="0 1 0" />
+</joint>
+
+<joint name="base_front_left_wheel_joint" type="continuous">
+  <parent link="base_link" />
+  <child link="front_left_wheel_link" />
+  <origin xyz="0.15 0.165 -0.025" rpy="0 0 0" />
+  <axis xyz="0 1 0" />
+</joint>
+
+<joint name="base_rear_right_wheel_joint" type="continuous">
+  <parent link="base_link" />
+  <child link="rear_right_wheel_link" />
+  <origin xyz="-0.15 -0.165 -0.025" rpy="0 0 0" />
+  <axis xyz="0 1 0" />
+</joint>
+
+<joint name="base_rear_left_wheel_joint" type="continuous">
+  <parent link="base_link" />
+  <child link="rear_left_wheel_link" />
+  <origin xyz="-0.15 0.165 -0.025" rpy="0 0 0" />
+  <axis xyz="0 1 0" />
+</joint>
+
+<!-- Camera support rod joint -->
+<joint name="base_to_camera_support_rod" type="fixed">
+  <parent link="base_link" />
+  <child link="camera_support_rod_link" />
+  <!-- Rod positioned 24cm (0.24m) from front of base -->
+  <origin xyz="0.05 0 0.5" rpy="0 0 0" />
+</joint>
+
+<!-- Camera joint - positioned at 10cm height on the rod, horizontally in front -->
+<joint name="camera_support_rod_to_camera" type="fixed">
+  <parent link="camera_support_rod_link" />
+  <child link="camera_link" />
+  <!-- Camera positioned in front of rod (rod radius 0.01 + camera radius 0.01 = 0.02m offset) -->
+  <origin xyz="0.02 0 -0.4" rpy="0 0 0" />
+</joint>
+
+<joint name="camera_to_optical_joint" type="fixed">
+  <parent link="camera_link" />
+  <child link="camera_rgb_frame" />
+  <origin xyz="0 0 0" rpy="-${pi/2} 0 -${pi/2}" />
+</joint>
+
+
+
+</robot>

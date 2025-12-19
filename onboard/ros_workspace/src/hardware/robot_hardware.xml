@@ -1,0 +1,9 @@
+<library path="hardware">
+  <class name="hardware/MecanumDriveEsp"
+         type="MecanumDriveEsp"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware Interface for Mecanum Drive Esp controller.
+    </description>
+  </class>
+</library>

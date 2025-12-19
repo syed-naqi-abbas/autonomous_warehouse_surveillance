@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 
+    ROS2 Control Configuration for Meccanum Drive Robot
+    This file is used on the LAPTOP
+    It communicates with RPi over ROS2 topics for actual hardware control
+    -->
+    
+    <ros2_control name="RealRobot" type="system">
+        <hardware>
+           <!-- Custom hardware interface plugin that communicates with RPi -->
+           <plugin>hardware/MecanumDriveEsp</plugin>
+            <param name="left_front_wheel_name">base_front_left_wheel_joint</param>
+            <param name="right_front_wheel_name">base_front_right_wheel_joint</param>
+            <param name="left_rear_wheel_name">base_rear_left_wheel_joint</param>
+            <param name="right_rear_wheel_name">base_rear_right_wheel_joint</param>
+            <param name="loop_rate">30</param>
+            <param name="device">/dev/esp32</param>
+            <param name="baud_rate">115200</param>
+            <param name="timeout">1000</param>
+            <param name="left_front_enc_counts_per_rev">720</param>   
+            <!--5037-->
+            <param name="right_front_enc_counts_per_rev">827</param> 
+            <!--2670-->
+            <param name="left_rear_enc_counts_per_rev">720</param>
+            <!--2689-->
+            <param name="right_rear_enc_counts_per_rev">827</param>
+            <!--1982-->
+        </hardware>
+        
+        <!-- Front Right Wheel -->
+        <joint name="base_front_right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        
+        <!-- Front Left Wheel -->
+        <joint name="base_front_left_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        
+        <!-- Rear Right Wheel -->
+        <joint name="base_rear_right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+        
+        <!-- Rear Left Wheel -->
+        <joint name="base_rear_left_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+    
+    <!-- 
+    Network Communication Topics:
+    - Laptop publishes: /wheel_velocity_commands (std_msgs/Float64MultiArray)
+      Format: [front_right, front_left, rear_right, rear_left] velocities
+    
+    - RPi publishes: /joint_states_from_rpi (sensor_msgs/JointState)
+      Contains: positions and velocities for all 4 wheels
+    -->
+</robot>

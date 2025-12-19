@@ -1,0 +1,44 @@
+ekf_filter_node:
+    ros__parameters:
+        frequency: 50.0
+        two_d_mode: true
+        publish_tf: true
+
+        map_frame: map
+        odom_frame: odom
+        base_link_frame: base_link
+        world_frame: odom
+
+        # --- SENSOR INPUTS ---
+        odom0: mecanum_drive_controller/odometry
+        imu0: imu/data
+
+        # --- FIX 1: ODOMETRY (ISOLATION MODE) ---
+        # We use wheel velocity (X, Y) to drive, but we IGNORE wheel rotation.
+        # This ensures that any rotation we see in RViz is coming PURELY from the IMU.
+        odom0_config: [false, false, false,
+                       false, false, false,
+                       true,  true,  false,  # Keep Linear Vel (X, Y)
+                       false, false, false,  # Index 11 (Yaw Vel) -> FALSE (Ignore wheel rotation)
+                       false, false, false]
+
+        # --- FIX 2: IMU (ACTIVE) ---
+        # We trust the IMU for absolute Yaw (Index 5) and Rotation Speed (Index 11).
+        imu0_config: [false, false, false,
+                      false, false, true,   # Index 5: Yaw -> TRUE
+                      false, false, false,
+                      false, false, true,   # Index 11: Yaw Velocity -> TRUE
+                      false, false, false]
+
+        # --- FIX 3: ORIENTATION SETTINGS ---
+        # Differential is FALSE so we don't drift.
+        # Relative is TRUE so the robot starts facing "forward" (0.0) in RViz, 
+        # but still tracks direction accurately after that.
+        imu0_differential: false
+        imu0_relative: true
+
+        # --- FIX 4: QOS OVERRIDES (THE CRITICAL FIX) ---
+        # This forces the EKF node to listen in "Reliable" mode.
+        qos_overrides:
+          /imu/data:
+            reliability: reliable

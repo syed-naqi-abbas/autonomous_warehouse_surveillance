@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Materials -->
+<material name="blue">
+  <color rgba="0 0 0.5 1" />
+</material>
+
+<material name="grey">
+  <color rgba="0.5 0.5 0.5 1" />
+</material>
+
+<material name="red">
+  <color rgba="1.0 0.0 0.0 1.0" />
+</material>
+
+<material name="green">
+  <color rgba="0.0 1.0 0.0 1.0" />
+</material>
+
+<material name="black">
+  <color rgba="0.0 0.0 0.0 1.0" />
+</material>
+
+<material name="white">
+  <color rgba="1.0 1.0 1.0 1.0" />
+</material>
+
+<material name="orange">
+  <color rgba="1.0 0.5 0.0 1.0" />
+</material>
+
+<material name="light_brown">
+  <color rgba="0.5 0.35 0.2 1.0" />
+</material>
+
+<material name="navy_blue">
+  <color rgba="0.0 0.0 0.5 1.0" />
+</material>
+
+<!-- Robot Dimensions -->
+<xacro:property name="base_length" value="0.58" />
+<xacro:property name="base_width" value="0.43" />
+<xacro:property name="base_height" value="0.28" />
+
+<!-- Wheel Properties -->
+<xacro:property name="wheel_radius" value="0.065" />
+<xacro:property name="wheel_length" value="0.05" />
+
+<!-- Plate Properties -->
+<xacro:property name="plate_mass" value="0.5" />
+<xacro:property name="plate_length" value="0.53" />
+<xacro:property name="plate_width" value="0.22" />
+<xacro:property name="plate_thickness" value="0.01" />
+
+<!-- Lidar Properties -->
+<xacro:property name="lidar_radius" value="0.038" />
+<xacro:property name="lidar_height" value="0.02" />
+<xacro:property name="lidar_mass" value="0.125" />
+
+<!-- Material Densities (kg/m³) -->
+<xacro:property name="wood_density" value="650" />
+<xacro:property name="aluminum_density" value="2700" />
+
+<!-- Mass Properties - calculated from geometry and material density -->
+<!-- Wood plate masses -->
+<xacro:property name="base_plate_mass" value="${(0.58 * 0.43 * 0.01) * wood_density}" />
+<xacro:property name="partition_plate_mass" value="${(0.28 * 0.41 * 0.01) * wood_density}" />
+<xacro:property name="top_plate_mass" value="${(0.28 * 0.41 * 0.01) * wood_density}" />
+
+<!-- Aluminum extrusion rod/bar masses -->
+<!-- Base perimeter rods: 4 rods, total ~1.82m length, 0.02x0.02 cross-section -->
+<xacro:property name="base_rod_mass" value="${(0.02 * 0.02 * 1.82) * aluminum_density}" />
+
+<!-- Vertical rods: 4 rods, 0.28m each, 0.02x0.02 cross-section -->
+<xacro:property name="vertical_rod_mass" value="${(0.02 * 0.02 * 0.28) * aluminum_density}" />
+
+<!-- Frame bars: 8 bars total, varying lengths, 0.03x0.03 cross-section -->
+<xacro:property name="frame_bar_mass" value="${(0.03 * 0.03 * 0.41) * aluminum_density}" />
+
+<!-- Lidar mount: small aluminum box 0.05x0.2x0.02 -->
+<xacro:property name="lidar_mount_mass" value="${(0.05 * 0.2 * 0.02) * aluminum_density}" />
+
+<!-- Wheel mass (rubber/plastic, estimate) -->
+<xacro:property name="wheel_mass" value="0.8" />
+
+<!-- Total body mass (sum of all structural components) -->
+<xacro:property name="total_body_mass" value="${base_plate_mass + (2 * partition_plate_mass) + (4 * base_rod_mass) + (4 * vertical_rod_mass) + (8 * frame_bar_mass) + lidar_mount_mass + (4 * wheel_mass)}" />
+
+<!-- Frame bar dimensions -->
+<xacro:property name="bar_width" value="0.03" />
+<xacro:property name="bar_height" value="0.03" />
+<xacro:property name="rod_width" value="0.02" />
+<xacro:property name="rod_height" value="0.02" />
+<xacro:property name="top_plate_width" value="${base_width - 0.02}" />
+
+</robot>

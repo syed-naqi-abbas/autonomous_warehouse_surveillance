@@ -1,0 +1,11 @@
+stepper_motor_node:
+  ros__parameters:
+    # Serial port configuration
+    serial_port: "/dev/esp32"
+    baudrate: 115200
+    # Motor specifications
+    step_angle: 1.8
+    max_speed: 1000
+    acceleration: 500
+    deceleration: 500
+    steps_per_revolution: 200

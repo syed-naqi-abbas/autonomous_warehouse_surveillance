@@ -1,0 +1,14 @@
+package.xml
+setup.cfg
+setup.py
+launch/qr_scanning.launch.py
+resource/warehouse_scanning
+warehouse_scanning/__init__.py
+warehouse_scanning/qr_detection.py
+warehouse_scanning.egg-info/PKG-INFO
+warehouse_scanning.egg-info/SOURCES.txt
+warehouse_scanning.egg-info/dependency_links.txt
+warehouse_scanning.egg-info/entry_points.txt
+warehouse_scanning.egg-info/requires.txt
+warehouse_scanning.egg-info/top_level.txt
+warehouse_scanning.egg-info/zip-safe
